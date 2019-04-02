@@ -1,0 +1,147 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="~/Content/Login.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="login-reg-panel">
+        <div class="login-info-box">
+            <h2>Hesabın var mı?</h2>
+            <p>Kullanıcı adını veya E-posta adresini kullanarak hemen giriş yap.</p>
+            <label id="label-register" for="log-reg-show">Giriş</label>
+            <input type="radio" name="active-log-panel" id="log-reg-show" checked="checked">
+        </div>
+
+        <div class="register-info-box">
+            <h2>Hesabın yok mu?</h2>
+            <p>Kullanıcı adı ve E-posta adresinle kolayca kaydol.</p>
+            <label id="label-login" for="log-login-show">Kaydol</label>
+            <input type="radio" name="active-log-panel" id="log-login-show">
+        </div>
+
+        <div class="white-panel">
+            <div class="login-show">
+                <h2>GİRİŞ</h2>
+                <div class="error-message" style="display:none;">Kullanıcı adı veya şifre hatalı!!</div>
+                <input type="text" placeholder="Kullanıcı adı ya da Şifre" name="email" id="email">
+                <input type="password" placeholder="Şifre" name="password" id="password">
+                <input type="button" value="Giriş" id="btn_login" />
+                <a href="/Login/RePassword">Şifreni mi unuttun?</a>
+            </div>
+            <div class="register-show">
+                <h2>KAYDOL</h2>
+                <div class="error-message" style="display:none;"></div>
+                <input type="text" id="username_up" name="UserName" placeholder="Kullanıcı Adı" />
+                <input type="text" id="email_up" name="Email" placeholder="Email">
+                <input type="password" id="password_up" name="Password" placeholder="Şifre">
+                <input type="password" id="password_check" placeholder="Şifre Tekrar">
+                <input type="button" value="Kaydol" id="btn_signup">
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.login-info-box').fadeOut();
+            $('.login-show').addClass('show-log-panel');
+        });
+
+
+        $('.login-reg-panel input[type="radio"]').on('change', function () {
+            if ($('#log-login-show').is(':checked')) {
+                $('.register-info-box').fadeOut();
+                $('.login-info-box').fadeIn();
+
+                $('.white-panel').addClass('right-log');
+                $('.register-show').addClass('show-log-panel');
+                $('.login-show').removeClass('show-log-panel');
+
+            }
+            else if ($('#log-reg-show').is(':checked')) {
+                $('.register-info-box').fadeIn();
+                $('.login-info-box').fadeOut();
+
+                $('.white-panel').removeClass('right-log');
+
+                $('.login-show').addClass('show-log-panel');
+                $('.register-show').removeClass('show-log-panel');
+            }
+        });</script>
+    <!--Sign In-->
+    <script>
+        $(document).ready(function () {
+            $('#btn_login').click(function () {
+                var data = {
+                    "email": $("#email").val(),
+                    "password": $("#password").val()
+                };
+                $.ajax({
+                    url: "/Login/ValidateUser",
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.Success) {
+                            window.location.href = "@Url.Action("Index","User")";
+                        }
+                        else {
+                            $(".error-message").fadeIn("slow");
+                            $("#password").val("")
+                        }
+                           },
+                    error: function () {
+                        console.log('Login Fail!!!');
+                    }
+                });
+            });
+        });
+    </script>
+    <!--Sign Up-->
+    <script>
+        $(document).ready(function () {
+            $('#btn_signup').click(function () {
+                var data = {
+                    "email": $("#email_up").val(),
+                    "username": $("#username_up").val(),
+                    "password": $("#password_up").val(),
+                    "passwordCheck": $("#password_check").val()
+                    };
+                $.ajax({
+                    url: "/Login/UserSignUp",
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.Success) {
+                            window.location.href = "@Url.Action("UserEdit","User",Session["User"])";
+                        }
+                        else {
+                            $(".error-message").text(response.Error);
+                            $(".error-message").fadeIn("slow");
+                            $("#password_up").val("");
+                            $("#password_check").val("");
+                        }
+                           },
+                    error: function () {
+                        console.log('Login Fail!!!');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

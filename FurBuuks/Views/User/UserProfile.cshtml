@@ -1,0 +1,241 @@
+﻿@using FurBuuks.Models
+@model User
+@{
+    ViewBag.Title = "UserProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+        h3 {
+            font-size: 20px;
+        }
+
+        .panel-body {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .panel {
+            background-color: white;
+        }
+
+        .dropdown-menu {
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        .brand_network {
+            color: #9D9D9D;
+            float: left;
+            position: absolute;
+            left: 70px;
+            top: 30px;
+            font-size: smaller;
+        }
+
+        .post-content {
+            margin-left: 58px;
+        }
+
+        .badge-important {
+            margin-top: 3px;
+            margin-left: 25px;
+            position: absolute;
+        }
+
+        body {
+            background-color: #e8e8e8;
+        }
+
+        /*sosyal medya için*/
+        .social:hover {
+            -webkit-transform: scale(1.1);
+            -moz-transform: scale(1.1);
+            -o-transform: scale(1.1);
+        }
+
+        .social {
+            -webkit-transform: scale(0.8);
+            /* Browser Variations: */
+            -moz-transform: scale(0.8);
+            -o-transform: scale(0.8);
+            -webkit-transition-duration: 0.5s;
+            -moz-transition-duration: 0.5s;
+            -o-transition-duration: 0.5s;
+        }
+
+        /*
+            Multicoloured Hover Variations
+        */
+
+        #social-fb:hover {
+            color: #3B5998;
+        }
+
+        #social-tw:hover {
+            color: #4099FF;
+        }
+
+        #social-gp:hover {
+            color: #d34836;
+        }
+
+        #social-em:hover {
+            color: #f39c12;
+        }
+
+        #social-ins:hover {
+            color: #D22F8C;
+        }
+
+        #social-tumb:hover {
+            color: #36465D;
+        }
+
+        /*Card'ın css*/
+
+        .h7 {
+            font-size: 0.8rem;
+        }
+
+        .gedf-wrapper {
+            margin-top: 0.97rem;
+        }
+
+        @@media (min-width: 992px) {
+            .gedf-main {
+                padding-left: 4rem;
+                padding-right: 4rem;
+            }
+
+            .gedf-card {
+                margin-bottom: 2.77rem;
+            }
+        }
+
+        /**Reset Bootstrap*/
+        .dropdown-toggle::after {
+            content: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <section class="wrapper">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <div class="mainbody container-fluid">
+            <div class="row">
+
+                <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-body">
+                                    <img src="@Model.ImageURL" height="100" width="100" style="border-radius:100px;" />
+                                    <hr>
+                                    <h3><strong>@Model.UserName </strong> <a href="/User/UserEdit/@Model.Id" class="btn ">Profili Düzenle</a> </h3>
+                                    <hr>
+                                    <h3><strong>Kitaplık Bilgilerim</strong></h3>
+                                    <p>@Model.Bio</p>
+                                    <hr>
+                                    <h3><strong>Sosyal medya</strong></h3>
+                                    <p>
+                                        @if (Model.FacebookURL != null)
+                                        {
+                                            <a href="@Model.FacebookURL"><i id="social-fb" class="fa fa-facebook-square fa-3x social"></i></a>
+                                        }
+                                        @if (Model.TwitterURL != null)
+                                        {
+                                            <a href="@Model.TwitterURL"><i id="social-tw" class="fa fa-twitter-square fa-3x social"></i></a>
+                                        }
+                                        @if (Model.InstagramURL != null)
+                                        {
+                                            <a href="@Model.InstagramURL"><i id="social-ins" class="fa fa-instagram fa-3x social"></i></a>
+                                        }
+                                        @if (Model.GooglePlusURL != null)
+                                        {
+                                            <a href="@Model.GooglePlusURL"><i id="social-gp" class="fa fa-google-plus-square fa-3x social"></i></a>
+                                        }
+                                        @if (Model.TumblrURL != null)
+                                        {
+                                            <a href="@Model.TumblrURL"><i id="social-tumb" class="fa fa-tumblr-square fa-3x social"></i></a>
+                                        }
+                                    </p>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <!--- \\\\\\\Post-->
+                    @foreach (var item in ViewBag.UserComments)
+
+                    {<div class="card gedf-card @item.Id" style="margin-bottom: 2.77rem;">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="mr-2">
+                                            <img class="rounded-circle" width="45" src="@Model.ImageURL" alt="">
+                                        </div>
+                                        <div class="ml-2">
+                                            <div class="h5 m-0">@Model.UserName</div>
+                                        </div>
+                                    </div>
+                                    <div>
+
+                                        <div  class="dropdown">
+                                            <button rel="@item.Id" class="del btn  "
+                                                    type="button">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>@item.CommentDate.ToString("dd.MM.yyyy")</div>
+                                <p class="card-text">
+                                    @item.Content
+                                </p>
+                            </div>
+                            <!-- Post /////-->
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            $(".del").click(function () {
+                var btn = $(this);
+                var id = btn.attr("rel")
+                $.ajax({
+                    url: "/User/DeleteComment/" + id,
+                    method: "POST",
+                    success: function (IsDeleted) {
+                        if (IsDeleted) {
+                            $(".card." + id).slideUp("slow");
+                        }
+                        else
+                            alert("An error has occured.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+

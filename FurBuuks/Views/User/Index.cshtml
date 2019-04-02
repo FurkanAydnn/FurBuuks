@@ -1,0 +1,370 @@
+﻿@using FurBuuks.Models
+@model User
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="~/Content/UserCard.css" rel="stylesheet" />
+<!------ Include the above in your HEAD tag ---------->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<link href="~/Content/animate.css" rel="stylesheet" />
+<link href="~/Content/owl.carousel.min.css" rel="stylesheet" />
+<link href="~/Content/owl.theme.green.min.css" rel="stylesheet" />
+<link href="~/Content/CommentBox.css" rel="stylesheet" />
+
+
+<section class="wrapper">
+    <div class="container-fluid gedf-wrapper">
+        <div class="row">
+            <!--User Card-->
+            <div class="col-md-3 usercard">
+                <div class="card hovercard">
+                    <div class="cardheader">
+                    </div>
+                    <div class="avatar">
+                        <img alt="" src="@Model.ImageURL">
+                    </div>
+                    <div class="info">
+                        <div class="title">
+                            <a target="_blank" href="/User/UserProfile">@Model.NameSurname</a>
+                        </div>
+                    </div>
+                    <div class="bottom">
+                        <div class="bottom-item">
+                            <a href="#">Okuduklarım <br />@Model.UserBooks.Count</a>
+                            <a href="#">Kütüphanem <br />@Model.UserBooks.Count</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End of User Card-->
+            <!--Comments Column-->
+            <div class="col-md-6 gedf-main">
+                <div class="card gedf-card comment-tools">
+                    <!-- Widget Area -->
+                    <div class="widget-area no-padding blank">
+                        <!-- Status Upload  -->
+                        <div class="status-upload">
+                            <ul>
+                                <li>
+                                    <a data-toggle="modal" data-target="#Extract-modal">
+                                        <i class="fas fa-quote-right"></i>
+                                        <div class="tool-header">Alıntı</div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-toggle="modal" data-target="#Review-modal">
+                                        <i class="fas fa-pencil-alt"></i>
+                                        <div class="tool-header">İnceleme</div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-toggle="modal" data-target="#Comment-modal">
+                                        <i class="fas fa-comment"></i>
+                                        <div class="tool-header">Yorum Yap</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div><!-- Status Upload  -->
+                    </div><!-- Widget Area -->
+                </div>
+                @foreach (Comment item in ViewBag.AllComments)
+                {
+                    <!--- \\\\\\\Post-->
+                    <div class="card gedf-card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="mr-2">
+                                        <img class="rounded-circle" width="45" src="@item.User.ImageURL" alt="">
+                                    </div>
+                                    <div class="ml-2">
+                                        <div class="h5 m-0"><a href="/User/UserProfile">@item.User.UserName</a></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                @if (item.BookName != null)
+                                {
+                                    <strong>@item.BookName</strong>
+                                    <br />
+                                }
+                                <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>@item.CommentDate.ToString("dd.MM.yyyy")</div>
+                                <div style="text-indent:20px;"><span>@item.Content</span></div>
+                            </p>
+                        </div>
+                       
+                    </div>
+                    <!-- Post /////-->
+                }
+
+                <!--Extract Modal-->
+                <div class="comment-model">
+                    <div class="modal fade" id="Extract-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <form accept-charset="UTF-8" action="/User/AddExtract" method="post">
+                                                <div class="ui-widget">
+                                                    <label>Kitap: </label>
+                                                    <select id="ExtractBook" name="ExtractBook">
+                                                        <option>Lütfen bir kitap seçiniz.</option>
+                                                        @foreach (Book item in ViewBag.UserBooks)
+                                                        {
+                                                            <option value="@item.Title">@item.Title</option>
+                                                        }
+
+                                                    </select>
+                                                </div>
+                                                <textarea class="form-control counted counted-extract" name="Content" placeholder="Alıntınızı buraya yazın.." rows="5" style="margin-bottom:10px;"></textarea>
+                                                <span class="pull-right" id="counter-extract" data-dismiss="modal">320 characters remaining</span>
+                                                <br />
+                                                <button class="btn btn-success">Paylaş</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Review Modal-->
+                <div class="comment-model">
+                    <div class="modal fade" id="Review-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <form accept-charset="UTF-8" action="/User/AddReview" method="POST">
+
+                                                <div class="ui-widget">
+                                                    <label>Kitap: </label>
+                                                    <select id="ReviewBook" name="ReviewBook">
+                                                        <option>Lütfen bir kitap seçiniz.</option>
+                                                        @foreach (Book item in ViewBag.UserBooks)
+                                                        {
+                                                            <option value="@item.Title">@item.Title</option>
+                                                        }
+
+                                                    </select>
+                                                </div>
+                                                <textarea class="form-control counted counted-review" name="Content" placeholder="İncelemenizi buraya yazın" rows="5" style="margin-bottom:10px;"></textarea>
+                                                <span class="pull-right" id="counter-review">320 characters remaining</span>
+                                                <br />
+                                                <button class="btn btn-success">Paylaş</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--Comment Modal-->
+                <div class="comment-model">
+                    <div class="modal fade" id="Comment-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="modal-body1">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <form accept-charset="UTF-8" method="post" action="/User/AddComment">
+                                                    <textarea class="form-control counted counted-comment" name="Content" placeholder="İncelemenizi buraya yazın" rows="5" style="margin-bottom:10px;"></textarea>
+                                                    <span class="pull-right" id="counter-comment">320 characters remaining</span>
+                                                    <br />
+                                                    <button class="btn btn-success">Paylaş</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Ends Comments Column-->
+            <!--Populer Books Card-->
+            <div class="col-md-3">
+                <div class="card gedf-card carousel">
+                    <div class="card-body carousel">
+                        <h5 class="card-title"><strong>Yeni Eklenenler</strong></h5>
+                        <div class="owl-carousel owl-theme">
+                            @foreach (Book item in ViewBag.RecentBooks)
+                            {
+                                <div class="item">
+                                    <img src="@item.ImageURL" alt="Alternate Text" style="width:99%;height:200px;" />
+                                    <br />
+                                    <span><strong>@item.Author</strong></span>
+                                    <br />
+                                    <span><strong>@item.Title</strong></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card gedf-card">
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+            <!--End Populer Books Card-->
+        </div>
+    </div>
+</section>
+
+<!--Owl Carousel script-->
+<script src="~/Scripts/owl.carousel.min.js"></script>
+<script>
+    $('.owl-carousel').owlCarousel({
+        animateOut: 'fadeOut',
+        animateIn: 'fadeIn',
+        items: 1,
+        margin: 30,
+        stagePadding: 30,
+        smartSpeed: 450,
+        loop: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 5000,
+        autoplayHoverPause: true
+    });
+</script>
+
+<!--Char Counter script-->
+<script>
+    (function ($) {
+        /**
+         * attaches a character counter to each textarea element in the jQuery object
+         * usage: $("#myTextArea").charCounter(max, settings);
+         */
+
+        $.fn.charCounter = function (max, settings) {
+            max = max || 100;
+            settings = $.extend({
+                container: "<span></span>",
+                classname: "charcounter",
+                format: "(%1 characters remaining)",
+                pulse: true,
+                delay: 0
+            }, settings);
+            var p, timeout;
+
+            function count(el, container) {
+                el = $(el);
+                if (el.val().length > max) {
+                    el.val(el.val().substring(0, max));
+                    if (settings.pulse && !p) {
+                        pulse(container, true);
+                    };
+                };
+                if (settings.delay > 0) {
+                    if (timeout) {
+                        window.clearTimeout(timeout);
+                    }
+                    timeout = window.setTimeout(function () {
+                        container.html(settings.format.replace(/%1/, (max - el.val().length)));
+                    }, settings.delay);
+                } else {
+                    container.html(settings.format.replace(/%1/, (max - el.val().length)));
+                }
+            };
+
+            function pulse(el, again) {
+                if (p) {
+                    window.clearTimeout(p);
+                    p = null;
+                };
+                el.animate({ opacity: 0.1 }, 100, function () {
+                    $(this).animate({ opacity: 1.0 }, 100);
+                });
+                if (again) {
+                    p = window.setTimeout(function () { pulse(el) }, 200);
+                };
+            };
+
+            return this.each(function () {
+                var container;
+                if (!settings.container.match(/^<.+>$/)) {
+                    // use existing element to hold counter message
+                    container = $(settings.container);
+                } else {
+                    // append element to hold counter message (clean up old element first)
+                    $(this).next("." + settings.classname).remove();
+                    container = $(settings.container)
+                        .insertAfter(this)
+                        .addClass(settings.classname);
+                }
+                $(this)
+                    .unbind(".charCounter")
+                    .bind("keydown.charCounter", function () { count(this, container); })
+                    .bind("keypress.charCounter", function () { count(this, container); })
+                    .bind("keyup.charCounter", function () { count(this, container); })
+                    .bind("focus.charCounter", function () { count(this, container); })
+                    .bind("mouseover.charCounter", function () { count(this, container); })
+                    .bind("mouseout.charCounter", function () { count(this, container); })
+                    .bind("paste.charCounter", function () {
+                        var me = this;
+                        setTimeout(function () { count(me, container); }, 10);
+                    });
+                if (this.addEventListener) {
+                    this.addEventListener('input', function () { count(this, container); }, false);
+                };
+                count(this, container);
+            });
+        };
+
+    })(jQuery);
+
+    $(function () {
+        $(".counted").charCounter(255, { container: "#counter-extract" });
+        $(".counted").charCounter(255, { container: "#counter-review" });
+        $(".counted").charCounter(255, { container: "#counter-comment" });
+    });</script>
+
+<script>
+    $(document).ready(function () {
+        $(".modal").on("hidden.bs.modal", function () {
+            $(".modal-body1").html("Where did he go?!?!?!");
+        });
+    });
+</script>
+

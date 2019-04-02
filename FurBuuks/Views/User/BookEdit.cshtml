@@ -1,0 +1,193 @@
+﻿@using FurBuuks.Models
+@model User
+@{
+    ViewBag.Title = "BookEdit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+</head>
+<body>
+    <hr>
+    <div class="container bootstrap snippet">
+        <section class="wrapper">
+            <div class="row">
+
+
+                <div class="col-sm-2"></div>
+
+                <div class="col-sm-8">
+
+                    <form class="form" method="post" id="registrationForm">
+
+                        @foreach (var item in Model.UserBooks)
+                        {
+
+                            <div class="row oylesine  @item.Id" style="border-bottom:2px solid #808080 ; margin:20px 0px 10px 0px">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class="col-xs-6 text-center">
+                                            <img src="@item.Book.ImageURL" height="200" width="150" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            <label>Kitap Adı: @item.Book.Title</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            <label>Yazar: @item.Book.Author</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            <label>Durum: @item.State</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            <label>
+                                                Başlangıç Tarihi: @Html.Raw(item.BeginTime.HasValue ? item.BeginTime.Value.ToString("dd.MM.yyyy") : string.Empty)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-xs-6">
+                                            <label>
+                                                Bitiş Tarihi: @Html.Raw(item.EndTime.HasValue ? item.EndTime.Value.ToString("dd.MM.yyyy") : string.Empty)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <button rel="@item.Id" class="del btn btn-danger "
+                                            type="button">
+                                        Sil
+                                    </button>
+                                    <button type="button" class="edit btn btn-success " data-toggle="modal" rel="@item.Id">
+                                        Düzenle
+                                    </button>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div class="modal" id="EditBook" role="dialog" tabindex="-1">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" rel="closebtn" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label>Başlangıç Tarihi:</label>
+                                                <input type="text" onclick="this.type='date'" onblur="this.type='text'" name="BeginTime" class="form-control" id="BeginTime" value="@Html.Raw(item.BeginTime.HasValue ? item.BeginTime.Value.ToString("dd.MM.yyyy") : string.Empty)" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Bitiş Tarihi:</label>
+                                                <input type="text" onclick="this.type='date'" onblur="this.type='text'" name="EndTime" class="form-control" id="EndTime" value="@Html.Raw(item.EndTime.HasValue ? item.EndTime.Value.ToString("dd.MM.yyyy") : string.Empty)" />
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="save btn btn-primary" rel="">Kaydet</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    </form>
+
+                </div><!--/col-8-->
+
+            </div>
+        </section>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $(".del").click(function () {
+                var btn = $(this);
+                var id = btn.attr("rel")
+                $.ajax({
+                    url: "/User/Delete/" + id,
+                    method: "POST",
+                    success: function (IsDeleted) {
+                        if (IsDeleted) {
+                            $(".oylesine." + id).slideUp("slow");
+                        }
+                        else
+                            alert("An error has occured.");
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".save").click(function () {
+                var btn = $(this);
+                var id = btn.attr("rel");
+                var data = {
+                    "BeginTime": $("#BeginTime").val(),
+                    "EndTime": $("#EndTime").val(),
+                    "edited": id
+                };
+                $.ajax({
+                    url: "/User/EditBook",
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    contentType:"application/json",
+                    success: function (IsSave) {
+                        if (IsSave.Success)
+                        {
+                            window.location.href = "@Url.Action("BookEdit","User", new { id = Model.Id})";
+                            $("#EditBook").fadeOut("slow");
+                        }
+
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".edit").click(function () {
+                var btn = $(this);
+                var id = btn.attr("rel");
+                $("#EditBook .save").attr("rel", id);
+                $("#EditBook").fadeIn();
+            })
+        })
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".close").click(function () {
+                var btn = $(this);
+                var id = btn.attr("rel")
+                $("#EditBook").fadeOut("slow");
+            })
+        })
+    </script>
+</body>
+</html>
+
+
